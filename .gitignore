@@ -1,0 +1,39 @@
+# -----------------------
+# Python build artifacts
+# -----------------------
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.egg
+dist/
+build/
+
+# -----------------------
+# Virtual environment
+# -----------------------
+venv/
+
+# -----------------------
+# AWS credentials & IoT certs
+# -----------------------
+*.pem
+*.key
+*.crt
+
+# -----------------------
+# Environment variable files
+# -----------------------
+.env
+.env.*
+
+# -----------------------
+# VSCode project settings
+# -----------------------
+.vscode/
+
+# -----------------------
+# OS files (Mac/Windows)
+# -----------------------
+.DS_Store
+Thumbs.db
+
