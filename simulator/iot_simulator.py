@@ -28,7 +28,3 @@ while True:
     client.publish("factory/line1/data", json.dumps(payload), 1)
     print("Sent:", payload)
     time.sleep(60)
-
-
-
-
