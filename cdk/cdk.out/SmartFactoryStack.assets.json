@@ -1,0 +1,36 @@
+{
+  "version": "45.0.0",
+  "files": {
+    "280963e7ece0c642f40ac1ef879f916e1b956be2acf8c8aa3031bf8ca7beb666": {
+      "displayName": "IoTStoreToDynamoDBFunction/Code",
+      "source": {
+        "path": "asset.280963e7ece0c642f40ac1ef879f916e1b956be2acf8c8aa3031bf8ca7beb666",
+        "packaging": "zip"
+      },
+      "destinations": {
+        "218508884047-eu-north-1-ef69b341": {
+          "bucketName": "cdk-hnb659fds-assets-218508884047-eu-north-1",
+          "objectKey": "280963e7ece0c642f40ac1ef879f916e1b956be2acf8c8aa3031bf8ca7beb666.zip",
+          "region": "eu-north-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::218508884047:role/cdk-hnb659fds-file-publishing-role-218508884047-eu-north-1"
+        }
+      }
+    },
+    "4db3b2049493ca9bfe0949a7752042e5be6efdaf6726def12766c567c1fa1031": {
+      "displayName": "SmartFactoryStack Template",
+      "source": {
+        "path": "SmartFactoryStack.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "218508884047-eu-north-1-b7694809": {
+          "bucketName": "cdk-hnb659fds-assets-218508884047-eu-north-1",
+          "objectKey": "4db3b2049493ca9bfe0949a7752042e5be6efdaf6726def12766c567c1fa1031.json",
+          "region": "eu-north-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::218508884047:role/cdk-hnb659fds-file-publishing-role-218508884047-eu-north-1"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

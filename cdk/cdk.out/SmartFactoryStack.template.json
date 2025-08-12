@@ -1,0 +1,447 @@
+{
+ "Resources": {
+  "SmartFactoryIoTBucket67F51EAA": {
+   "Type": "AWS::S3::Bucket",
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "SmartFactoryStack/SmartFactoryIoTBucket/Resource"
+   }
+  },
+  "SmartFactoryIoTMessagesE4FED994": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "id",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "timestamp",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "KeySchema": [
+     {
+      "AttributeName": "id",
+      "KeyType": "HASH"
+     },
+     {
+      "AttributeName": "timestamp",
+      "KeyType": "RANGE"
+     }
+    ],
+    "TableName": "SmartFactoryIoTMessages"
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "SmartFactoryStack/SmartFactoryIoTMessages/Resource"
+   }
+  },
+  "IoTStoreToDynamoDBFunctionServiceRoleC9072C12": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "SmartFactoryStack/IoTStoreToDynamoDBFunction/ServiceRole/Resource"
+   }
+  },
+  "IoTStoreToDynamoDBFunctionServiceRoleDefaultPolicyE9168C67": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "SmartFactoryIoTMessagesE4FED994",
+          "Arn"
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "s3:PutObject",
+        "s3:PutObjectLegalHold",
+        "s3:PutObjectRetention",
+        "s3:PutObjectTagging",
+        "s3:PutObjectVersionTagging",
+        "s3:Abort*"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          {
+           "Fn::GetAtt": [
+            "SmartFactoryIoTBucket67F51EAA",
+            "Arn"
+           ]
+          },
+          "/*"
+         ]
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "IoTStoreToDynamoDBFunctionServiceRoleDefaultPolicyE9168C67",
+    "Roles": [
+     {
+      "Ref": "IoTStoreToDynamoDBFunctionServiceRoleC9072C12"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "SmartFactoryStack/IoTStoreToDynamoDBFunction/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "IoTStoreToDynamoDBFunction7B8D3CF4": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-218508884047-eu-north-1",
+     "S3Key": "280963e7ece0c642f40ac1ef879f916e1b956be2acf8c8aa3031bf8ca7beb666.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "BUCKET_NAME": {
+       "Ref": "SmartFactoryIoTBucket67F51EAA"
+      },
+      "DYNAMODB_TABLE_NAME": {
+       "Ref": "SmartFactoryIoTMessagesE4FED994"
+      }
+     }
+    },
+    "Handler": "iot_store_to_dynamodb.lambda_handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "IoTStoreToDynamoDBFunctionServiceRoleC9072C12",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.12"
+   },
+   "DependsOn": [
+    "IoTStoreToDynamoDBFunctionServiceRoleDefaultPolicyE9168C67",
+    "IoTStoreToDynamoDBFunctionServiceRoleC9072C12"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "SmartFactoryStack/IoTStoreToDynamoDBFunction/Resource",
+    "aws:asset:path": "asset.280963e7ece0c642f40ac1ef879f916e1b956be2acf8c8aa3031bf8ca7beb666",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "IoTStoreToDynamoDBFunctionAllowIoTInvokeCC036F08": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "IoTStoreToDynamoDBFunction7B8D3CF4",
+      "Arn"
+     ]
+    },
+    "Principal": "iot.amazonaws.com",
+    "SourceArn": "arn:aws:iot:eu-north-1:218508884047:rule/TriggerLambdaOnMQTTMessage"
+   },
+   "Metadata": {
+    "aws:cdk:path": "SmartFactoryStack/IoTStoreToDynamoDBFunction/AllowIoTInvoke"
+   }
+  },
+  "IoTTopicRule": {
+   "Type": "AWS::IoT::TopicRule",
+   "Properties": {
+    "RuleName": "TriggerLambdaOnMQTTMessage",
+    "TopicRulePayload": {
+     "Actions": [
+      {
+       "Lambda": {
+        "FunctionArn": {
+         "Fn::GetAtt": [
+          "IoTStoreToDynamoDBFunction7B8D3CF4",
+          "Arn"
+         ]
+        }
+       }
+      }
+     ],
+     "RuleDisabled": false,
+     "Sql": "SELECT * FROM 'factory/line1/data'"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SmartFactoryStack/IoTTopicRule"
+   }
+  },
+  "DynamoDBToS3FunctionServiceRoleE50F49A4": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "SmartFactoryStack/DynamoDBToS3Function/ServiceRole/Resource"
+   }
+  },
+  "DynamoDBToS3FunctionServiceRoleDefaultPolicy807D434E": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "SmartFactoryIoTMessagesE4FED994",
+          "Arn"
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "s3:PutObject",
+        "s3:PutObjectLegalHold",
+        "s3:PutObjectRetention",
+        "s3:PutObjectTagging",
+        "s3:PutObjectVersionTagging",
+        "s3:Abort*"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          {
+           "Fn::GetAtt": [
+            "SmartFactoryIoTBucket67F51EAA",
+            "Arn"
+           ]
+          },
+          "/*"
+         ]
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "DynamoDBToS3FunctionServiceRoleDefaultPolicy807D434E",
+    "Roles": [
+     {
+      "Ref": "DynamoDBToS3FunctionServiceRoleE50F49A4"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "SmartFactoryStack/DynamoDBToS3Function/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "DynamoDBToS3Function5DE4B518": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-218508884047-eu-north-1",
+     "S3Key": "280963e7ece0c642f40ac1ef879f916e1b956be2acf8c8aa3031bf8ca7beb666.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "BUCKET_NAME": {
+       "Ref": "SmartFactoryIoTBucket67F51EAA"
+      },
+      "DYNAMODB_TABLE_NAME": {
+       "Ref": "SmartFactoryIoTMessagesE4FED994"
+      }
+     }
+    },
+    "Handler": "dynamodb_to_s3.lambda_handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "DynamoDBToS3FunctionServiceRoleE50F49A4",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.12"
+   },
+   "DependsOn": [
+    "DynamoDBToS3FunctionServiceRoleDefaultPolicy807D434E",
+    "DynamoDBToS3FunctionServiceRoleE50F49A4"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "SmartFactoryStack/DynamoDBToS3Function/Resource",
+    "aws:asset:path": "asset.280963e7ece0c642f40ac1ef879f916e1b956be2acf8c8aa3031bf8ca7beb666",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "HourlyDynamoDBToS3RuleC20F587F": {
+   "Type": "AWS::Events::Rule",
+   "Properties": {
+    "ScheduleExpression": "cron(0 * * * ? *)",
+    "State": "ENABLED",
+    "Targets": [
+     {
+      "Arn": {
+       "Fn::GetAtt": [
+        "DynamoDBToS3Function5DE4B518",
+        "Arn"
+       ]
+      },
+      "Id": "Target0"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "SmartFactoryStack/HourlyDynamoDBToS3Rule/Resource"
+   }
+  },
+  "HourlyDynamoDBToS3RuleAllowEventRuleSmartFactoryStackDynamoDBToS3FunctionB31F2615BBA1BBA0": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "DynamoDBToS3Function5DE4B518",
+      "Arn"
+     ]
+    },
+    "Principal": "events.amazonaws.com",
+    "SourceArn": {
+     "Fn::GetAtt": [
+      "HourlyDynamoDBToS3RuleC20F587F",
+      "Arn"
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SmartFactoryStack/HourlyDynamoDBToS3Rule/AllowEventRuleSmartFactoryStackDynamoDBToS3FunctionB31F2615"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/02Ny07DQAxFv6V7x6SJxJ4isY5S9pUzMcVkHiieoYpG8+8oExaszrF8r91h1z5je6KHNmZeGisT5mskswA99Ja1x3xJZuEIrx/+zw5cSLnAvHlyYZ4wv9NkeU9VKWDJTTNhfkveRAl+X/33gVcnqhJ8ASGHeQxHv3IIVsxWc9UKaH8jVY6KLztAQsT9W/gWMybLwD/so2Kuw34nWS4FRtaQVsNQa9dId/H3AsMWP4N/6vHc4bk9falIsyYfxTGOB38B9bzweR0BAAA="
+   },
+   "Metadata": {
+    "aws:cdk:path": "SmartFactoryStack/CDKMetadata/Default"
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}
