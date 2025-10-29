@@ -144,7 +144,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-218508884047-eu-north-1",
-     "S3Key": "280963e7ece0c642f40ac1ef879f916e1b956be2acf8c8aa3031bf8ca7beb666.zip"
+     "S3Key": "5620b12d6e858b53f014ad8cf44808d12529632a0e00ab210952bd2bce1add2b.zip"
     },
     "Environment": {
      "Variables": {
@@ -171,7 +171,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "SmartFactoryStack/IoTStoreToDynamoDBFunction/Resource",
-    "aws:asset:path": "asset.280963e7ece0c642f40ac1ef879f916e1b956be2acf8c8aa3031bf8ca7beb666",
+    "aws:asset:path": "asset.5620b12d6e858b53f014ad8cf44808d12529632a0e00ab210952bd2bce1add2b",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -325,7 +325,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-218508884047-eu-north-1",
-     "S3Key": "280963e7ece0c642f40ac1ef879f916e1b956be2acf8c8aa3031bf8ca7beb666.zip"
+     "S3Key": "5620b12d6e858b53f014ad8cf44808d12529632a0e00ab210952bd2bce1add2b.zip"
     },
     "Environment": {
      "Variables": {
@@ -352,7 +352,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "SmartFactoryStack/DynamoDBToS3Function/Resource",
-    "aws:asset:path": "asset.280963e7ece0c642f40ac1ef879f916e1b956be2acf8c8aa3031bf8ca7beb666",
+    "aws:asset:path": "asset.5620b12d6e858b53f014ad8cf44808d12529632a0e00ab210952bd2bce1add2b",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -400,10 +400,281 @@
     "aws:cdk:path": "SmartFactoryStack/HourlyDynamoDBToS3Rule/AllowEventRuleSmartFactoryStackDynamoDBToS3FunctionB31F2615"
    }
   },
+  "SmartFactoryGlueDb": {
+   "Type": "AWS::Glue::Database",
+   "Properties": {
+    "CatalogId": "218508884047",
+    "DatabaseInput": {
+     "Name": "smart_factory_db"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SmartFactoryStack/SmartFactoryGlueDb"
+   }
+  },
+  "SmartFactoryGlueCrawlerRole3695039B": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "glue.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSGlueServiceRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "SmartFactoryStack/SmartFactoryGlueCrawlerRole/Resource"
+   }
+  },
+  "SmartFactoryGlueCrawlerRoleDefaultPolicyB5F65AAF": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "s3:ListBucket",
+        "s3:GetBucketLocation"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "SmartFactoryIoTBucket67F51EAA",
+         "Arn"
+        ]
+       }
+      },
+      {
+       "Action": "s3:GetObject",
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          {
+           "Fn::GetAtt": [
+            "SmartFactoryIoTBucket67F51EAA",
+            "Arn"
+           ]
+          },
+          "/*"
+         ]
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "SmartFactoryGlueCrawlerRoleDefaultPolicyB5F65AAF",
+    "Roles": [
+     {
+      "Ref": "SmartFactoryGlueCrawlerRole3695039B"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "SmartFactoryStack/SmartFactoryGlueCrawlerRole/DefaultPolicy/Resource"
+   }
+  },
+  "SmartFactoryGlueCrawler": {
+   "Type": "AWS::Glue::Crawler",
+   "Properties": {
+    "DatabaseName": "smart_factory_db",
+    "Name": "iot_hourly_crawler",
+    "RecrawlPolicy": {
+     "RecrawlBehavior": "CRAWL_EVERYTHING"
+    },
+    "Role": {
+     "Fn::GetAtt": [
+      "SmartFactoryGlueCrawlerRole3695039B",
+      "Arn"
+     ]
+    },
+    "SchemaChangePolicy": {
+     "DeleteBehavior": "LOG",
+     "UpdateBehavior": "UPDATE_IN_DATABASE"
+    },
+    "Targets": {
+     "S3Targets": [
+      {
+       "Path": {
+        "Fn::Join": [
+         "",
+         [
+          "s3://",
+          {
+           "Ref": "SmartFactoryIoTBucket67F51EAA"
+          },
+          "/iot-data/"
+         ]
+        ]
+       }
+      }
+     ]
+    }
+   },
+   "DependsOn": [
+    "SmartFactoryGlueDb"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "SmartFactoryStack/SmartFactoryGlueCrawler"
+   }
+  },
+  "StartGlueCrawlerHourlyC8DABA7A": {
+   "Type": "AWS::Events::Rule",
+   "Properties": {
+    "ScheduleExpression": "cron(5 * * * ? *)",
+    "State": "ENABLED",
+    "Targets": [
+     {
+      "Arn": {
+       "Fn::GetAtt": [
+        "AWSb4cf1abd4e4f4bc699441af7ccd9ec371511E620",
+        "Arn"
+       ]
+      },
+      "Id": "Target0",
+      "Input": "{\"service\":\"Glue\",\"action\":\"startCrawler\",\"parameters\":{\"Name\":\"iot_hourly_crawler\"}}"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "SmartFactoryStack/StartGlueCrawlerHourly/Resource"
+   }
+  },
+  "StartGlueCrawlerHourlyAllowEventRuleSmartFactoryStackStartGlueCrawlerHourlyStartGlueCrawlerHourlyTarget0HandlerDC34084FF504630B": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "AWSb4cf1abd4e4f4bc699441af7ccd9ec371511E620",
+      "Arn"
+     ]
+    },
+    "Principal": "events.amazonaws.com",
+    "SourceArn": {
+     "Fn::GetAtt": [
+      "StartGlueCrawlerHourlyC8DABA7A",
+      "Arn"
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SmartFactoryStack/StartGlueCrawlerHourly/AllowEventRuleSmartFactoryStackStartGlueCrawlerHourlyStartGlueCrawlerHourlyTarget0HandlerDC34084F"
+   }
+  },
+  "AWSb4cf1abd4e4f4bc699441af7ccd9ec37ServiceRole9FFE9C50": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "SmartFactoryStack/AWSb4cf1abd4e4f4bc699441af7ccd9ec37/ServiceRole/Resource"
+   }
+  },
+  "AWSb4cf1abd4e4f4bc699441af7ccd9ec37ServiceRoleDefaultPolicy4D43A7C1": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "glue:StartCrawler",
+       "Effect": "Allow",
+       "Resource": "*"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "AWSb4cf1abd4e4f4bc699441af7ccd9ec37ServiceRoleDefaultPolicy4D43A7C1",
+    "Roles": [
+     {
+      "Ref": "AWSb4cf1abd4e4f4bc699441af7ccd9ec37ServiceRole9FFE9C50"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "SmartFactoryStack/AWSb4cf1abd4e4f4bc699441af7ccd9ec37/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "AWSb4cf1abd4e4f4bc699441af7ccd9ec371511E620": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-218508884047-eu-north-1",
+     "S3Key": "2ae6c3325f7d4ca8e77ad076a10de37ad4fff0d4acdb22314dda362fc7c8129a.zip"
+    },
+    "Handler": "index.handler",
+    "MemorySize": 256,
+    "Role": {
+     "Fn::GetAtt": [
+      "AWSb4cf1abd4e4f4bc699441af7ccd9ec37ServiceRole9FFE9C50",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs22.x",
+    "Timeout": 60
+   },
+   "DependsOn": [
+    "AWSb4cf1abd4e4f4bc699441af7ccd9ec37ServiceRoleDefaultPolicy4D43A7C1",
+    "AWSb4cf1abd4e4f4bc699441af7ccd9ec37ServiceRole9FFE9C50"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "SmartFactoryStack/AWSb4cf1abd4e4f4bc699441af7ccd9ec37/Resource",
+    "aws:asset:path": "asset.2ae6c3325f7d4ca8e77ad076a10de37ad4fff0d4acdb22314dda362fc7c8129a",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
   "CDKMetadata": {
    "Type": "AWS::CDK::Metadata",
    "Properties": {
-    "Analytics": "v2:deflate64:H4sIAAAAAAAA/02Ny07DQAxFv6V7x6SJxJ4isY5S9pUzMcVkHiieoYpG8+8oExaszrF8r91h1z5je6KHNmZeGisT5mskswA99Ja1x3xJZuEIrx/+zw5cSLnAvHlyYZ4wv9NkeU9VKWDJTTNhfkveRAl+X/33gVcnqhJ8ASGHeQxHv3IIVsxWc9UKaH8jVY6KLztAQsT9W/gWMybLwD/so2Kuw34nWS4FRtaQVsNQa9dId/H3AsMWP4N/6vHc4bk9falIsyYfxTGOB38B9bzweR0BAAA="
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/02OwW6EMAxEv2Xvwd0FqffuVj0j6H1lgpe6hKTCSRGK8u9VQlX1NG809tg11OdnOJ9wk0qPc2V4gNh71LPCTe5RGojXoGfy6vawv3TIFYWSGneLixsHiO84GMpTBZIyuAwjQnwLVnt2Nkf/uaV1YZHseraTIe/+8qQYF4idOxqLts6w3stmoaSkuaMIeYGXLIqdh3zffbHugiFF32S9QCwm94T82GQCQbw97Ct6HFBKdFtxM7SmpDoSF1ZNqpT2Hie2U1Lt7j+cfWrgUsPlfPoU5moN1vNC0B36AwO6TKtNAQAA"
    },
    "Metadata": {
     "aws:cdk:path": "SmartFactoryStack/CDKMetadata/Default"

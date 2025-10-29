@@ -18,7 +18,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::218508884047:role/cdk-hnb659fds-deploy-role-218508884047-eu-north-1",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::218508884047:role/cdk-hnb659fds-cfn-exec-role-218508884047-eu-north-1",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-218508884047-eu-north-1/4db3b2049493ca9bfe0949a7752042e5be6efdaf6726def12766c567c1fa1031.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-218508884047-eu-north-1/83829501870842567d21a90315e5ccbaafb51414e070fb7270161d10e6473551.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -112,6 +112,70 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "HourlyDynamoDBToS3RuleAllowEventRuleSmartFactoryStackDynamoDBToS3FunctionB31F2615BBA1BBA0"
+          }
+        ],
+        "/SmartFactoryStack/SmartFactoryGlueDb": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SmartFactoryGlueDb"
+          }
+        ],
+        "/SmartFactoryStack/SmartFactoryGlueCrawlerRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SmartFactoryGlueCrawlerRole3695039B"
+          }
+        ],
+        "/SmartFactoryStack/SmartFactoryGlueCrawlerRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SmartFactoryGlueCrawlerRoleDefaultPolicyB5F65AAF"
+          }
+        ],
+        "/SmartFactoryStack/SmartFactoryGlueCrawler": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SmartFactoryGlueCrawler"
+          }
+        ],
+        "/SmartFactoryStack/StartGlueCrawlerHourly/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "StartGlueCrawlerHourlyC8DABA7A"
+          }
+        ],
+        "/SmartFactoryStack/StartGlueCrawlerHourly/AllowEventRuleSmartFactoryStackStartGlueCrawlerHourlyStartGlueCrawlerHourlyTarget0HandlerDC34084F": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "StartGlueCrawlerHourlyAllowEventRuleSmartFactoryStackStartGlueCrawlerHourlyStartGlueCrawlerHourlyTarget0HandlerDC34084FF504630B"
+          }
+        ],
+        "/SmartFactoryStack/AWSb4cf1abd4e4f4bc699441af7ccd9ec37": [
+          {
+            "type": "aws:cdk:is-custom-resource-handler-singleton",
+            "data": true
+          },
+          {
+            "type": "aws:cdk:is-custom-resource-handler-runtime-family",
+            "data": 0
+          }
+        ],
+        "/SmartFactoryStack/AWSb4cf1abd4e4f4bc699441af7ccd9ec37/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AWSb4cf1abd4e4f4bc699441af7ccd9ec37ServiceRole9FFE9C50"
+          }
+        ],
+        "/SmartFactoryStack/AWSb4cf1abd4e4f4bc699441af7ccd9ec37/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AWSb4cf1abd4e4f4bc699441af7ccd9ec37ServiceRoleDefaultPolicy4D43A7C1"
+          }
+        ],
+        "/SmartFactoryStack/AWSb4cf1abd4e4f4bc699441af7ccd9ec37/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AWSb4cf1abd4e4f4bc699441af7ccd9ec371511E620"
           }
         ],
         "/SmartFactoryStack/CDKMetadata/Default": [
