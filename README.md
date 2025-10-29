@@ -22,7 +22,7 @@ This project simulates an End-to-end IIoT data pipeline demo for smart devices, 
 ---
 
 ##Pre-requisites
-Prerequisites
+
 1. AWS Account
 An active AWS account with Free Tier eligibility (recommended for hands-on deployment with no cost).
 
@@ -40,14 +40,14 @@ User/role must have enough rights to create/manage S3, DynamoDB, IAM, Lambda, Io
 
 Note:
 All core services are fully covered by AWS Free Tier, enabling you to deploy and test without extra cost if limits are not exceeded.
-
+---
 
 ## Architecture
 
 <img width="1848" height="835" alt="image" src="https://github.com/user-attachments/assets/0253334f-8b22-459c-954f-e9c026938def" />
 
 Boxes indicated in Blue represent free tier services and yellow boxes indicate paid services presented here for future scope
-
+---
 
 ## Repository Structure
 
@@ -64,7 +64,7 @@ Python scripts for IoT message ingestion, transformation, and batch processing t
 Python script for simulating factory sensor messages and publishing via MQTT to AWS IoT Core.
 
 4. venv/ — Python Virtual Environment (already initialized for dependencies)
-
+---
 ### Scripts
 
 1. cdk/smart_factory_iot_stack.py
