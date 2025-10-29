@@ -21,7 +21,7 @@ This project simulates an End-to-end IIoT data pipeline demo for smart devices, 
 - **Visualization(Future Scope)**: Dashboards built in **Amazon QuickSight**
 ---
 
-##Pre-requisites
+## Pre-requisites
 
 1. AWS Account
 An active AWS account with Free Tier eligibility (recommended for hands-on deployment with no cost).
