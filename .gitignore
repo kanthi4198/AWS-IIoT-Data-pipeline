@@ -19,7 +19,7 @@ venv/
 *.pem
 *.key
 *.crt
-cdk.out
+cdk.out/
 
 # -----------------------
 # Environment variable files
