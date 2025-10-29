@@ -24,7 +24,7 @@ venv/
 # Environment variable files
 # -----------------------
 .env
-.env.*
+
 
 # -----------------------
 # VSCode project settings
