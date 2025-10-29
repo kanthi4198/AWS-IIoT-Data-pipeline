@@ -21,21 +21,21 @@ This project simulates an End-to-end IIoT data pipeline demo for smart devices, 
 - **Visualization(Future Scope)**: Dashboards built in **Amazon QuickSight**
 ---
 
-##Pre-requiisites
+##Pre-requisites
 Prerequisites
-AWS Account
+1. AWS Account
 An active AWS account with Free Tier eligibility (recommended for hands-on deployment with no cost).
 
-AWS CLI
+2. AWS CLI
 Installed and configured. Install Guide
 
-AWS CDK v2
+3. AWS CDK v2
 Installed globally (for infrastructure deployment).
 
-Git
+4. Git
 For cloning and version control.
 
-Basic AWS Permissions
+5. Basic AWS Permissions
 User/role must have enough rights to create/manage S3, DynamoDB, IAM, Lambda, IoT Core, and CloudWatch within your AWS account.
 
 Note:
@@ -51,22 +51,33 @@ Boxes indicated in Blue represent free tier services and yellow boxes indicate p
 
 ## Repository Structure
 
-Repository Structure
 This project is organized as follows:
 
-cdk/ — AWS CDK (Infrastructure-as-Code)
-
+### Folders
+1. cdk/ — AWS CDK (Infrastructure-as-Code)
 Contains the stack scripts for creating AWS resources: S3, DynamoDB, IAM, Lambda, IoT Core, EventBridge.
 
-lambda/ — Lambda Function Code
-
+2. lambda/ — Lambda Function Code
 Python scripts for IoT message ingestion, transformation, and batch processing to S3.
 
-simulator/ — IoT Data Simulator
-
+3. simulator/ — IoT Data Simulator
 Python script for simulating factory sensor messages and publishing via MQTT to AWS IoT Core.
 
-venv/ — Python Virtual Environment (already initialized for dependencies)
+4. venv/ — Python Virtual Environment (already initialized for dependencies)
+
+### Scripts
+
+1. cdk/smart_factory_iot_stack.py
+Defines the infrastructure-as-code stack: creates all AWS resources (S3, DynamoDB, Lambdas, IoT Core, IAM) and wires up the real-time/batch data flow.
+
+2. lambda/iot_store_to_dynamodb.py
+Lambda function that receives MQTT device messages from AWS IoT Core and stores them in DynamoDB with timestamping.
+
+3. lambda/dynamodb_to_s3.py
+Batch Lambda that runs hourly, exporting new IoT records from DynamoDB to S3 as CSV files for further analytics/archival.
+
+4. simulator/iot_simulator.py
+Python script to mimic factory sensor data and publish to AWS IoT Core, simulating real-time telemetry streams.
 
 README.md, LICENSE, .gitignore — Metadata and documentation files
 
