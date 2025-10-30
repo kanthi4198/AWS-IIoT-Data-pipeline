@@ -40,6 +40,7 @@ User/role must have enough rights to create/manage S3, DynamoDB, IAM, Lambda, Io
 
 Note:
 All core services are fully covered by AWS Free Tier, enabling you to deploy and test without extra cost if limits are not exceeded.
+AWS glue only to be run on demand instead if of hourly, to avoid costs
 ---
 
 ## Architecture

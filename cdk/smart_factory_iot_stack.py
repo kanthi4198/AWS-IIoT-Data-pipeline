@@ -136,7 +136,7 @@ class SmartFactoryStack(Stack):
                 update_behavior="UPDATE_IN_DATABASE",
             ),
             recrawl_policy=glue.CfnCrawler.RecrawlPolicyProperty(
-                recrawl_behavior="CRAWL_EVERYTHING",
+                recrawl_behavior="CRAWL_NEW_FOLDERS",
             ),
            
         )
@@ -145,21 +145,21 @@ class SmartFactoryStack(Stack):
         # 4) EventBridge rule to start Glue Crawler shortly after Lambda B runs
 
         # Lambda B runs at minute 0; crawler starts 5 minutes later.
-        crawler_rule = events.Rule(
-            self, "StartGlueCrawlerHourly",
-            schedule=events.Schedule.cron(minute="5", hour="*"),
-        )
-        crawler_rule.add_target(
-            targets.AwsApi(
-                service="Glue",
-                action="startCrawler",
-                parameters={"Name": CRAWLER_NAME},
-                policy_statement=iam.PolicyStatement(
-                    actions=["glue:StartCrawler"],
-                    resources=["*"],
-                ),
-            )
-        )
+        #crawler_rule = events.Rule(
+        #    self, "StartGlueCrawlerHourly",
+        #    schedule=events.Schedule.cron(minute="5", hour="*"),
+        #)
+        #crawler_rule.add_target(
+        #    targets.AwsApi(
+        #        service="Glue",
+        #        action="startCrawler",
+        #        parameters={"Name": CRAWLER_NAME},
+        #        policy_statement=iam.PolicyStatement(
+        #            actions=["glue:StartCrawler"],
+        #            resources=["*"],
+        #        ),
+        #    )
+        #)
 
         
 
