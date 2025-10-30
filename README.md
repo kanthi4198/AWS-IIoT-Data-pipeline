@@ -27,7 +27,7 @@ This project simulates an End-to-end IIoT data pipeline demo for smart devices, 
 An active AWS account with Free Tier eligibility (recommended for hands-on deployment with no cost).
 
 2. AWS CLI
-Installed and configured. Install Guide
+Installed and configured.
 
 3. AWS CDK v2
 Installed globally (for infrastructure deployment).
