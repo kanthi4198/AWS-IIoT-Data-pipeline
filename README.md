@@ -45,7 +45,8 @@ AWS glue only to be run on demand instead if of hourly, to avoid costs
 
 ## Architecture
 
-<img width="1848" height="835" alt="image" src="https://github.com/user-attachments/assets/0253334f-8b22-459c-954f-e9c026938def" />
+<img width="1918" height="1078" alt="image" src="https://github.com/user-attachments/assets/eb4bb88b-e7b5-4b88-b15c-b098fe706ccb" />
+
 
 Boxes indicated in Blue represent free tier services and yellow boxes indicate paid services presented here for future scope
 ---
